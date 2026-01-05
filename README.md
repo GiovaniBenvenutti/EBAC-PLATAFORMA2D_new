@@ -1,1 +1,5 @@
-Packages importados
+IMPORTEI 
+
+2D SPRITE SHAPE
+2D PSD IMPORTER
+TextMeshPro
