@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public float speedRun;
     public float forceJump = 2f;
 
+    private float _currentSpeed;
+
 
     [Header("Animation SetUp")]
     public float jumpScaleY = 1.5f;
@@ -23,10 +25,6 @@ public class PlayerController : MonoBehaviour
     public Ease ease = Ease.OutBack;
     public bool justLanded = false;
 
-
-
-
-    private float _currentSpeed;
 
     // Update is called once per frame
     void Update()
