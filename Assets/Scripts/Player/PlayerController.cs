@@ -25,6 +25,12 @@ public class PlayerController : MonoBehaviour
     public Ease ease = Ease.OutBack;
     public bool justLanded = false;
 
+    [Header("Animation Player")]
+    public Animator animator;
+    public string runAnim = "RUN";
+    public float playerSwipDuration = 0.05f;
+
+
 
     // Update is called once per frame
     void Update()
@@ -38,20 +44,36 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKey(KeyCode.LeftShift))
         {
             _currentSpeed = speedRun;
+            animator.speed = 1.5f;
         }
         else
         {
             _currentSpeed = speed;
+            animator.speed = 0.8f;
         }
 
         if(Input.GetKey(KeyCode.LeftArrow)) 
         {
             myRigidbody.velocity = new Vector2(-_currentSpeed, myRigidbody.velocity.y);
+            if(myRigidbody.transform.localScale.x !=-1)
+            {
+                myRigidbody.transform.DOScaleX(-1, playerSwipDuration);
+            }
+            animator.SetBool(runAnim, true);
         } 
         else if(Input.GetKey(KeyCode.RightArrow))
         {
-            myRigidbody.velocity = new Vector2(_currentSpeed, myRigidbody.velocity.y);            
-        }  
+            myRigidbody.velocity = new Vector2(_currentSpeed, myRigidbody.velocity.y);
+            if(myRigidbody.transform.localScale.x !=1)
+            {
+                myRigidbody.transform.DOScaleX(1, playerSwipDuration);
+            }
+            animator.SetBool(runAnim, true);
+        }
+        else
+        {
+            animator.SetBool(runAnim, false);
+        }
 
         if(myRigidbody.velocity.x > 0)
         {
