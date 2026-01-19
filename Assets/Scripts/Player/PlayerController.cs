@@ -28,8 +28,26 @@ public class PlayerController : MonoBehaviour
     [Header("Animation Player")]
     public Animator animator;
     public string runAnim = "RUN";
+    public string deathAnim = "DEATH";
     public float playerSwipDuration = 0.05f;
 
+    public HealthBase _healthBase;
+
+    void Awake()
+    {
+        _healthBase = GetComponent<HealthBase>();
+
+        if(_healthBase != null)
+        {
+            _healthBase.OnKill += OnPlayerKill;
+        }
+    }
+
+    private void OnPlayerKill()
+    {
+        _healthBase.OnKill -= OnPlayerKill;
+        animator.SetTrigger(deathAnim);
+    }
 
 
     // Update is called once per frame
