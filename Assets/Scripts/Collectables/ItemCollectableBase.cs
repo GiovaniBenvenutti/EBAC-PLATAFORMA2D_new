@@ -12,11 +12,8 @@ public class ItemCollectableBase : MonoBehaviour
         if (collision.transform.CompareTag(compareTag))
         {
             Collect();
-           // Destroy(gameObject);
         }
     }
-
-
 
     protected virtual void Collect() // o que acontece quando o item é coletado
     {
@@ -27,6 +24,5 @@ public class ItemCollectableBase : MonoBehaviour
     protected virtual void OnCollect() // efeitos visuais e sonoros ao coletar
     {
         Debug.Log("Item coletado: " + gameObject.name);
-
     }
 }

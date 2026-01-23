@@ -6,49 +6,30 @@ using DG.Tweening;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D myRigidbody;
+    private Animator _currentPlayer;
 
-    [Header("Speed SetUp")]
-    public Vector2 friction = new Vector2(0.1f, 0);
-    public float speed;
-    public float speedRun;
-    public float forceJump = 2f;
-
-    private float _currentSpeed;
-
-
-    [Header("Animation SetUp")]
-    public float jumpScaleY = 1.5f;
-    public float jumpScaleX = 0.7f;
-    public float landScaleY = 0.7f;
-    public float landScaleX = 1.5f;
-    public float animationDuration = 0.3f;
-    public Ease ease = Ease.OutBack;
-    public bool justLanded = false;
-
-    [Header("Animation Player")]
-    public Animator animator;
-    public string runAnim = "RUN";
-    public string deathAnim = "DEATH";
-    public float playerSwipDuration = 0.05f;
-
-    public HealthBase _healthBase;
+    public SO_PlayerSetUp soPlayerSetUp;
+    public HealthBase healthBase;
 
     void Awake()
     {
-        _healthBase = GetComponent<HealthBase>();
+        healthBase = GetComponent<HealthBase>();
 
-        if(_healthBase != null)
+        if(healthBase != null)
         {
-            _healthBase.OnKill += OnPlayerKill;
+            healthBase.OnKill += OnPlayerKill;
         }
+
+        _currentPlayer = Instantiate(soPlayerSetUp.player, transform);
+        
     }
 
     private void OnPlayerKill()
     {
-        _healthBase.OnKill -= OnPlayerKill;
-        animator.SetTrigger(deathAnim);
+        healthBase.OnKill -= OnPlayerKill;
+        _currentPlayer.SetTrigger(soPlayerSetUp.deathAnim);
     }
-
+    
 
     // Update is called once per frame
     void Update()
@@ -61,45 +42,45 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.LeftShift))
         {
-            _currentSpeed = speedRun;
-            animator.speed = 1.5f;
+            soPlayerSetUp._currentSpeed = soPlayerSetUp.speedRun;
+            _currentPlayer.speed = 1.5f;
         }
         else
         {
-            _currentSpeed = speed;
-            animator.speed = 0.8f;
+            soPlayerSetUp._currentSpeed = soPlayerSetUp.speed;
+            _currentPlayer.speed = 0.8f;
         }
 
         if(Input.GetKey(KeyCode.LeftArrow)) 
         {
-            myRigidbody.velocity = new Vector2(-_currentSpeed, myRigidbody.velocity.y);
+            myRigidbody.velocity = new Vector2(-soPlayerSetUp._currentSpeed, myRigidbody.velocity.y);
             if(myRigidbody.transform.localScale.x !=-1)
             {
-                myRigidbody.transform.DOScaleX(-1, playerSwipDuration);
+                myRigidbody.transform.DOScaleX(-1, soPlayerSetUp.playerSwipDuration);
             }
-            animator.SetBool(runAnim, true);
+            _currentPlayer.SetBool(soPlayerSetUp.runAnim, true);
         } 
         else if(Input.GetKey(KeyCode.RightArrow))
         {
-            myRigidbody.velocity = new Vector2(_currentSpeed, myRigidbody.velocity.y);
+            myRigidbody.velocity = new Vector2(soPlayerSetUp._currentSpeed, myRigidbody.velocity.y);
             if(myRigidbody.transform.localScale.x !=1)
             {
-                myRigidbody.transform.DOScaleX(1, playerSwipDuration);
+                myRigidbody.transform.DOScaleX(1, soPlayerSetUp.playerSwipDuration);
             }
-            animator.SetBool(runAnim, true);
+            _currentPlayer.SetBool(soPlayerSetUp.runAnim, true);
         }
         else
         {
-            animator.SetBool(runAnim, false);
+            _currentPlayer.SetBool(soPlayerSetUp.runAnim, false);
         }
 
         if(myRigidbody.velocity.x > 0)
         {
-            myRigidbody.velocity -= friction;
+            myRigidbody.velocity -= soPlayerSetUp.friction;
         }
         else if(myRigidbody.velocity.x < 0)
         {
-            myRigidbody.velocity += friction;
+            myRigidbody.velocity += soPlayerSetUp.friction;
         }
     }
 
@@ -107,7 +88,7 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space)) 
         {
-            myRigidbody.velocity = Vector2.up * forceJump;
+            myRigidbody.velocity = Vector2.up * soPlayerSetUp.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
             DOTween.Kill(myRigidbody.transform);
 
@@ -117,25 +98,25 @@ public class PlayerController : MonoBehaviour
 
     private void HandleScaleJump()
     {
-        myRigidbody.transform.DOScaleY(jumpScaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
-        myRigidbody.transform.DOScaleX(jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+        myRigidbody.transform.DOScaleY(soPlayerSetUp.jumpScaleY, soPlayerSetUp.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetUp.ease);
+        myRigidbody.transform.DOScaleX(soPlayerSetUp.jumpScaleX, soPlayerSetUp.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetUp.ease);
     }
 
     private void HandleScaleLanding()
     {
-        if(justLanded)
+        if(soPlayerSetUp.justLanded)
         {
-            myRigidbody.transform.DOScaleY(landScaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
-            myRigidbody.transform.DOScaleX(landScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+            myRigidbody.transform.DOScaleY(soPlayerSetUp.landScaleY, soPlayerSetUp.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetUp.ease);
+            myRigidbody.transform.DOScaleX(soPlayerSetUp.landScaleX, soPlayerSetUp.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetUp.ease);
         }
     }
 
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!justLanded && !other.CompareTag("junpper")) // só roda se ainda não tinha "pousado"
+        if (!soPlayerSetUp.justLanded && !other.CompareTag("junpper")) // só roda se ainda não tinha "pousado"
         {
-            justLanded = true;
+            soPlayerSetUp.justLanded = true;
             HandleScaleLanding();
             StartCoroutine(reScale());
 
@@ -145,13 +126,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        justLanded = false;
+        soPlayerSetUp.justLanded = false;
         
     }
 
     IEnumerator reScale()
     {
-        yield return new WaitForSeconds(animationDuration + 0.2f);
+        yield return new WaitForSeconds(soPlayerSetUp.animationDuration + 0.2f);
         myRigidbody.transform.localScale = Vector3.one; // garante (1,1,1)
     }
 

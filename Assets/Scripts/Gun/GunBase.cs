@@ -12,7 +12,10 @@ public class GunBase : MonoBehaviour
     private Coroutine _currentCoroutine;
 
     // Start is called before the first frame update
-    //void Start() {}
+    void Start() 
+    {
+        playerSideReference = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     // Update is called once per frame
     void Update()
