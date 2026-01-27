@@ -7,6 +7,7 @@ public class ItemCollectableAir : ItemCollectableBase
     protected override void OnCollect()
     {
         ItemsManager.Instance.AddAir();
+        base.OnCollect();
     }
 }
 
