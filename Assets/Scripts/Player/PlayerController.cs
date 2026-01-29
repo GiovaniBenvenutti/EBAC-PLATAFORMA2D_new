@@ -6,10 +6,22 @@ using DG.Tweening;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D myRigidbody;
+    public HealthBase healthBase;
+
+    [Header("Player SetUp")]
+    public SO_PlayerSetUp soPlayerSetUp;
+
     private Animator _currentPlayer;
 
-    public SO_PlayerSetUp soPlayerSetUp;
-    public HealthBase healthBase;
+    [Header("Jump Collision Check")]
+    public Collider2D collider2D;
+    public float distToGround;
+    public float spaceToGround = 0.2f;
+
+    [Header("Particles VFX")]
+    public ParticleSystem jumpVFX;
+    public ParticleSystem walkVFX;
+
 
     void Awake()
     {
@@ -21,7 +33,18 @@ public class PlayerController : MonoBehaviour
         }
 
         _currentPlayer = Instantiate(soPlayerSetUp.player, transform);
+
+        if(collider2D != null)
+        {
+            distToGround = collider2D.bounds.extents.y;
+        }
         
+    }
+
+    private bool isGrounded()
+    {
+        Debug.DrawRay(transform.position, Vector2.down, Color.magenta, distToGround + spaceToGround);
+        return Physics2D.Raycast(transform.position, Vector2.down, distToGround + spaceToGround);
     }
 
     private void OnPlayerKill()
@@ -34,8 +57,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        isGrounded();
         HandleJump();
         HandleMoviment();
+
+        if(isGrounded() && myRigidbody.velocity.magnitude > 0.1f)
+        {
+            if(!walkVFX.isPlaying)
+            {
+                walkVFX.Play();
+            }
+        }
+        else
+        {
+            if(walkVFX.isPlaying)
+            {
+                walkVFX.Stop();
+            }
+        }
     }
 
     private void HandleMoviment()
@@ -86,14 +125,25 @@ public class PlayerController : MonoBehaviour
 
     private void HandleJump()
     {
-        if(Input.GetKeyDown(KeyCode.Space)) 
+        // se trocar o isGrounded pelo soPlayerSetUp.justLanded funciona tbm, 
+        // só deiei assim pra ficar igual o do curso
+        if(Input.GetKeyDown(KeyCode.Space) && isGrounded()) 
         {
             myRigidbody.velocity = Vector2.up * soPlayerSetUp.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
             DOTween.Kill(myRigidbody.transform);
 
             HandleScaleJump();
+            PlayJumpVFX();
         } 
+    }
+
+    private void PlayJumpVFX()
+    {
+        if(jumpVFX != null)
+        {
+            jumpVFX.Play();
+        }
     }
 
     private void HandleScaleJump()
