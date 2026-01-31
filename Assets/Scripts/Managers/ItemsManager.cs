@@ -26,7 +26,7 @@ public class ItemsManager : Singleton<ItemsManager>
     public void AddCoins(int amount = 1)
     {
         coins.value += amount;
-        Debug.Log("itemManager  -->  Moedas coletadas. Total de moedas: " + coins.value);
+        //Debug.Log("itemManager  -->  Moedas coletadas. Total de moedas: " + coins.value);
         UiInGameManager.updateTextCoins(coins.value.ToString());
     }
 
@@ -34,7 +34,7 @@ public class ItemsManager : Singleton<ItemsManager>
     public void AddAir(int amount = 1)
     {
         air.value += amount;
-        Debug.Log("itemManager  -->  Ar coletado. Total de ar: " + air.value);
+        //Debug.Log("itemManager  -->  Ar coletado. Total de ar: " + air.value);
         UiInGameManager.updateTextAir(air.value.ToString());
     }
     

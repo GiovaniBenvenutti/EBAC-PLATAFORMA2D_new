@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour
     {
         if(jumpVFX != null)
         {
-            jumpVFX.Play();
+            VFXManager.Instance.PlayVfxByType(VFXManager.VFXType.JUMP, transform.position);
         }
     }
 
@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!soPlayerSetUp.justLanded && !other.CompareTag("junpper")) // só roda se ainda não tinha "pousado"
+        if (!soPlayerSetUp.justLanded && other.CompareTag("floor")) // só roda se ainda não tinha "pousado"
         {
             soPlayerSetUp.justLanded = true;
             HandleScaleLanding();
